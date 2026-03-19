@@ -1,0 +1,4 @@
+Flask==3.0.2
+pymongo==4.16.0
+gunicorn==21.2.0
+pytest==8.0.2
