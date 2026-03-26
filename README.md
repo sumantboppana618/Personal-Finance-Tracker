@@ -6,6 +6,44 @@
 
 ---
 
+## Week 11 Milestone Status
+
+- [x] Project proposal added to the repository `README.md`
+- [x] Public GitHub repository created with a project board and initial issues
+- [x] Database provisioned and connection tested through `/db-health`
+- [x] App skeleton running locally with a working `/health` endpoint
+- [x] Dockerfile created and tested for container builds
+- [x] Feature branches created for each team ownership area
+
+---
+
+## Week 12 Milestone Status
+
+- [x] Core transaction routes implemented (create, read, update, delete, filter)
+- [x] MongoDB read/write implemented with mock-friendly fallback for tests/CI
+- [x] AI spending insight endpoint (`/ai/spending-insights`) working end-to-end
+- [x] Unit test suite expanded to 12 tests covering routes and logic
+- [x] GitHub Actions CI added (lint, tests, Docker build, container smoke test)
+- [x] Docker image builds cleanly; container health endpoint verified in CI
+
+---
+
+## Local Setup & Secrets
+
+- **Environment variables** (add to `.env` or export before running):
+  - `MONGO_URI`: Atlas connection string (e.g., `mongodb+srv://user:pass@personalfinancetracker...`)
+  - `MONGO_DB_NAME`: optional; defaults to `finance_tracker`
+  - `GEMINI_KEY`: Gemini API key powering `/ai/spending-insights`
+
+- **Commands**
+  - `pip install -r requirements.txt`
+  - `python app.py`
+  - `& "$HOME\AppData\Roaming\Python\Python314\Scripts\pytest.exe" -q`
+  - `& "$HOME\AppData\Roaming\Python\Python314\Scripts\flake8.exe" . --jobs 1`
+
+These steps mirror the CI job so your local dev environment runs the same checks as every push/PR to `main`.
+
+
 ## Features
 
 ### Core Features
@@ -20,7 +58,7 @@
 
 ### AI-Powered Features via Gemini
 
-- **AI Spending Analysis:** Analyses the user’s recent transactions and explains spending patterns
+- **AI Spending Analysis:** Analyses the user's recent transactions and explains spending patterns
 - **AI Budget Advice:** Suggests budget adjustments based on transaction history
 - **AI Saving Tips:** Gives personalised money-saving recommendations based on overspending categories
 
@@ -53,19 +91,19 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 
 ## Team Members and Roles
 
-### Member 1 — Backend & Database Lead
+### Member 1 - Backend & Database Lead
 - Build Flask routes and application logic
 - Set up MongoDB Atlas connection
 - Implement CRUD operations for transactions
 - Maintain API structure and data validation
 
-### Member 2 — Frontend & UI Lead
+### Member 2 - Frontend & UI Lead
 - Build dashboard UI
 - Create forms for adding and editing transactions
 - Design transaction list and summary views
 - Improve usability and responsiveness
 
-### Member 3 — AI & DevOps Lead
+### Member 3 - AI & DevOps Lead
 - Integrate Gemini API
 - Build AI analysis and recommendation endpoints
 - Create Dockerfile and container setup
@@ -78,14 +116,14 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 - All members create and work from feature branches
 - All tasks tracked through GitHub Issues and project board
 - All changes merged through pull requests
-- Every member reviews teammates’ PRs and leaves meaningful comments
+- Every member reviews teammates' PRs and leaves meaningful comments
 - All members contribute commits and weekly progress updates
 
 ---
 
 ## High-Level 3-Week Timeline
 
-### Week 11 — Foundation & Proposal
+### Week 11 - Foundation & Proposal
 - Finalise project proposal
 - Set up a public GitHub repository and project board
 - Create issues and feature branches
@@ -93,14 +131,14 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 - Build Flask app skeleton with health-check endpoint
 - Create and test Dockerfile
 
-### Week 12 — Core Development & CI
+### Week 12 - Core Development & CI
 - Implement transaction CRUD features
 - Build dashboard and transaction interface
 - Implement one AI-powered feature end-to-end
 - Add unit tests for routes and application logic
 - Set up GitHub Actions CI pipeline
 
-### Week 13 — Deployment & Presentation Prep
+### Week 13 - Deployment & Presentation Prep
 - Deploy the application to Render
 - Configure CD pipeline from GitHub Actions
 - Test AI features on live deployment
