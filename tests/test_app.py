@@ -125,7 +125,7 @@ def test_ai_spending_insights(setup_app_env):
     create_transaction(client, category="rent", amount=500)
     create_transaction(client, category="food", amount=200)
     resp = client.get("/ai/spending-insights")
-    text = resp.get_json()["insight"].lower()
+    text = resp.get_json()["insight"]
     assert "rent" in text or "food" in text
 
 
