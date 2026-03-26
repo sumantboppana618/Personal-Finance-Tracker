@@ -1,6 +1,7 @@
 import os
 from pymongo import MongoClient
 
+
 def get_db_status():
     mongo_uri = os.getenv("MONGO_URI")
 
