@@ -34,5 +34,47 @@ def add_transaction():
     transactions.append(data)
     return jsonify(data), 201
 
+@app.route("/summary")
+def summary():
+    total_income = sum(
+        float(t["amount"]) for t in transactions if t.get("type") == "income"
+    )
+    total_expense = sum(
+        float(t["amount"]) for t in transactions if t.get("type") == "expense"
+    )
+    return jsonify({
+        "total_income": total_income,
+        "total_expense": total_expense,
+        "balance": total_income - total_expense
+    })
+
+
+@app.route("/transactions/<int:index>", methods=["DELETE"])
+def delete_transaction(index):
+    if 0 <= index < len(transactions):
+        removed = transactions.pop(index)
+        return jsonify(removed)
+    return jsonify({"error": "Transaction not found"}), 404
+
+
+@app.route("/transactions/reset", methods=["POST"])
+def reset_transactions():
+    transactions.clear()
+    return jsonify({"message": "All transactions cleared"})
+
+
+@app.route("/summary/monthly")
+def monthly_summary():
+    months = {}
+    for t in transactions:
+        month_key = t.get("date", "")[:7]
+        if month_key not in months:
+            months[month_key] = {"month": month_key, "income": 0, "expense": 0}
+        if t.get("type") == "income":
+            months[month_key]["income"] += float(t["amount"])
+        else:
+            months[month_key]["expense"] += float(t["amount"])
+    return jsonify(sorted(months.values(), key=lambda x: x["month"], reverse=True))
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
