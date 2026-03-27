@@ -81,6 +81,7 @@
                     </div>
                     <div class="actions">
                         <button type="submit" class="primary-btn">Save Transaction</button>
+                        <button type="button" id="cancel-edit" class="ghost-btn small" style="display:none;">Cancel Edit</button>
                         <p id="form-status" class="status"></p>
                     </div>
                 </form>
@@ -202,6 +203,7 @@
         const monthlyList = document.getElementById("monthly-list");
         const expenseCategoriesEl = document.getElementById("expense-categories");
         const refreshBtn = document.getElementById("refresh-btn");
+        const cancelEditBtn = document.getElementById("cancel-edit");
 
         const filterType = document.getElementById("filter-type");
         const filterCategory = document.getElementById("filter-category");
@@ -226,6 +228,14 @@
             return data;
         }
 
+        function cancelEdit() {
+            delete form.dataset.editId;
+            form.reset();
+            document.querySelector(".primary-btn").textContent = "Save Transaction";
+            cancelEditBtn.style.display = "none";
+            document.getElementById("date").valueAsDate = new Date();
+        }
+
         async function loadSummary() {
             const summary = await fetchJSON("/summary");
             incomeEl.textContent = formatCurrency(summary.total_income);
@@ -246,18 +256,39 @@
                     <td>${row.category}</td>
                     <td>${formatCurrency(row.amount)}</td>
                     <td>${row.date}</td>
-                    <td><button class="link-btn" data-id="${row.id}">Delete</button></td>
+                    <td>
+                        <button class="link-btn edit-btn" data-id="${row.id}">Edit</button>
+                        <button class="link-btn delete-btn" data-id="${row.id}">Delete</button>
+                    </td>
                 `;
                 bodyEl.appendChild(tr);
             });
 
-            bodyEl.querySelectorAll("button[data-id]").forEach((btn) => {
+            bodyEl.querySelectorAll(".delete-btn").forEach((btn) => {
                 btn.addEventListener("click", async () => {
                     try {
                         await fetchJSON(`/transactions/${btn.dataset.id}`, { method: "DELETE" });
                         await refreshAll();
                     } catch (err) {
                         alert(err.message);
+                    }
+                });
+            });
+
+            bodyEl.querySelectorAll(".edit-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const row = rows.find((r) => String(r.id) === btn.dataset.id);
+                    if (row) {
+                        document.getElementById("title").value = row.title;
+                        document.getElementById("amount").value = row.amount;
+                        document.getElementById("type").value = row.type;
+                        document.getElementById("category").value = row.category;
+                        document.getElementById("date").value = row.date;
+                        document.getElementById("notes").value = row.notes || "";
+                        form.dataset.editId = row.id;
+                        document.querySelector(".primary-btn").textContent = "Update Transaction";
+                        cancelEditBtn.style.display = "inline-block";
+                        window.scrollTo({ top: 0, behavior: "smooth" });
                     }
                 });
             });
@@ -360,18 +391,32 @@
             const formData = new FormData(form);
             const payload = Object.fromEntries(formData.entries());
             try {
-                await fetchJSON("/transactions", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
+                if (form.dataset.editId !== undefined && form.dataset.editId !== "") {
+                    await fetchJSON(`/transactions/${form.dataset.editId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    });
+                    delete form.dataset.editId;
+                    document.querySelector(".primary-btn").textContent = "Save Transaction";
+                    cancelEditBtn.style.display = "none";
+                } else {
+                    await fetchJSON("/transactions", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    });
+                }
                 form.reset();
                 statusEl.textContent = "Saved!";
+                document.getElementById("date").valueAsDate = new Date();
                 await refreshAll();
             } catch (err) {
                 statusEl.textContent = err.message;
             }
         });
+
+        cancelEditBtn.addEventListener("click", cancelEdit);
 
         filterBtn.addEventListener("click", async () => {
             try {
