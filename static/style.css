@@ -319,3 +319,15 @@ th { color: var(--muted); font-weight: 600; }
     .grid { grid-template-columns: 1fr; }
     .form-card, .transactions-card { grid-column: span 1; }
 }
+
+@media (max-width: 600px) {
+    .page { padding: 16px 12px 40px; }
+    h1 { font-size: 22px; }
+    .hero-text { padding: 18px; }
+    .summary-card .value { font-size: 18px; }
+    .field-group { grid-template-columns: 1fr; }
+    .filters { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; align-items: stretch; }
+    .monthly-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+    th, td { padding: 8px 6px; font-size: 13px; }
+}
