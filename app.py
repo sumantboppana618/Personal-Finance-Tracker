@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, jsonify, render_template, request
 from db import get_db_status
-from db import get_db_status
 
 app = Flask(__name__)
 transactions = []
