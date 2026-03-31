@@ -20,14 +20,50 @@ def db_health():
     status = get_db_status()
     return jsonify(status)
 
-
+##Updated add transaction
+@app.route("/transactions", methods=["GET"])
+# def get_transactions():
+#     result = []
+#     for i, t in enumerate(transactions):
+#         entry = dict(t)
+#         entry["id"] = i
+#         result.append(entry)
+#     return jsonify(result)
 @app.route("/transactions", methods=["GET"])
 def get_transactions():
+    f_type = request.args.get('type')           
+    f_category = request.args.get('category')   
+    f_start = request.args.get('start_date')    
+    f_end = request.args.get('end_date')        
+
     result = []
     for i, t in enumerate(transactions):
-        entry = dict(t)
-        entry["id"] = i
-        result.append(entry)
+
+        keep = True
+        
+        if f_type and t.get("type") != f_type:
+            keep = False
+            
+        if keep and f_category:
+            if f_category.lower() not in t.get("category", "").lower():
+                keep = False
+        
+        if keep and f_start:
+            if t.get("date", "") < f_start:
+                keep = False
+        
+        if keep and f_end:
+            if t.get("date", "") > f_end:
+                keep = False
+
+        if keep:
+            entry = dict(t)
+            entry["id"] = i  
+            result.append(entry)
+            
+
+    result.sort(key=lambda x: x["date"], reverse=True)
+    
     return jsonify(result)
 
 

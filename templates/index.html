@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Finance Tracker</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
     <div class="page">
         <header class="hero">
             <div class="hero-text">
                 <p class="eyebrow">Personal Finance Tracker</p>
                 <h1>Stay on top of your money</h1>
-                <p class="lede">Add income and expenses, watch your balance update in real time, and get quick AI tips on where to save.</p>
+                <p class="lede">Add income and expenses, watch your balance update in real time, and get quick AI tips
+                    on where to save.</p>
             </div>
             <div class="summary-grid">
                 <div class="card summary-card income">
@@ -81,7 +84,8 @@
                     </div>
                     <div class="actions">
                         <button type="submit" class="primary-btn">Save Transaction</button>
-                        <button type="button" id="cancel-edit" class="ghost-btn small" style="display:none;">Cancel Edit</button>
+                        <button type="button" id="cancel-edit" class="ghost-btn small" style="display:none;">Cancel
+                            Edit</button>
                         <p id="form-status" class="status"></p>
                     </div>
                 </form>
@@ -122,7 +126,9 @@
                             </tr>
                         </thead>
                         <tbody id="income-body">
-                            <tr><td colspan="5" class="muted">No income yet.</td></tr>
+                            <tr>
+                                <td colspan="5" class="muted">No income yet.</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -145,7 +151,9 @@
                             </tr>
                         </thead>
                         <tbody id="expense-body">
-                            <tr><td colspan="5" class="muted">No expenses yet.</td></tr>
+                            <tr>
+                                <td colspan="5" class="muted">No expenses yet.</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -322,7 +330,9 @@
             });
         }
 
+
         async function loadTransactions() {
+        
             const params = new URLSearchParams();
             if (filterType.value) params.append("type", filterType.value);
             if (filterCategory.value) params.append("category", filterCategory.value);
@@ -444,4 +454,5 @@
         });
     </script>
 </body>
+
 </html>
