@@ -387,9 +387,23 @@
 
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            statusEl.textContent = "Saving...";
             const formData = new FormData(form);
             const payload = Object.fromEntries(formData.entries());
+
+            if (!payload.title || !payload.title.trim()) {
+                statusEl.textContent = "Please enter a title.";
+                return;
+            }
+            if (!payload.amount || isNaN(payload.amount) || Number(payload.amount) <= 0) {
+                statusEl.textContent = "Please enter a valid positive amount.";
+                return;
+            }
+            if (!payload.date) {
+                statusEl.textContent = "Please select a date.";
+                return;
+            }
+
+            statusEl.textContent = "Saving...";
             try {
                 if (form.dataset.editId !== undefined && form.dataset.editId !== "") {
                     await fetchJSON(`/transactions/${form.dataset.editId}`, {
