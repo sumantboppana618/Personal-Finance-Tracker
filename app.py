@@ -1,8 +1,25 @@
 from flask import Flask, jsonify, render_template, request
-from db import get_db_status
+
+from db import (
+    clear_transactions,
+    create_transaction,
+    delete_transaction,
+    get_db_status,
+    get_monthly_summary,
+    get_summary,
+    get_transactions,
+    update_transaction,
+)
 
 app = Flask(__name__)
-transactions = []
+
+
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 @app.route("/")
@@ -22,13 +39,14 @@ def db_health():
 
 
 @app.route("/transactions", methods=["GET"])
-def get_transactions():
-    result = []
-    for i, t in enumerate(transactions):
-        entry = dict(t)
-        entry["id"] = i
-        result.append(entry)
-    return jsonify(result)
+def list_transactions():
+    filters = {
+        "type": request.args.get("type"),
+        "category": request.args.get("category"),
+        "start_date": request.args.get("start_date"),
+        "end_date": request.args.get("end_date"),
+    }
+    return jsonify(get_transactions(filters))
 
 
 @app.route("/transactions", methods=["POST"])
@@ -38,71 +56,52 @@ def add_transaction():
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
-    transactions.append(data)
-    return jsonify(data), 201
+    created = create_transaction(data)
+    return jsonify(created), 201
 
 
-@app.route("/transactions/<int:index>", methods=["PUT"])
-def update_transaction(index):
-    if 0 <= index < len(transactions):
-        data = request.get_json()
-        transactions[index] = data
-        return jsonify(data)
-    return jsonify({"error": "Transaction not found"}), 404
+@app.route("/transactions/<string:tx_id>", methods=["PUT"])
+def update_transaction_route(tx_id):
+    data = request.get_json()
+    updated = update_transaction(tx_id, data)
+    if not updated:
+        return jsonify({"error": "Transaction not found"}), 404
+    return jsonify(updated)
 
 
-@app.route("/transactions/<int:index>", methods=["DELETE"])
-def delete_transaction(index):
-    if 0 <= index < len(transactions):
-        removed = transactions.pop(index)
-        return jsonify(removed)
-    return jsonify({"error": "Transaction not found"}), 404
+@app.route("/transactions/<string:tx_id>", methods=["DELETE"])
+def delete_transaction_route(tx_id):
+    removed = delete_transaction(tx_id)
+    if not removed:
+        return jsonify({"error": "Transaction not found"}), 404
+    return jsonify(removed)
 
 
 @app.route("/transactions/reset", methods=["POST"])
 def reset_transactions():
-    transactions.clear()
+    clear_transactions()
     return jsonify({"message": "All transactions cleared"})
 
 
 @app.route("/summary")
 def summary():
-    total_income = sum(
-        float(t["amount"]) for t in transactions if t.get("type") == "income"
-    )
-    total_expense = sum(
-        float(t["amount"]) for t in transactions if t.get("type") == "expense"
-    )
-    return jsonify({
-        "total_income": total_income,
-        "total_expense": total_expense,
-        "balance": total_income - total_expense
-    })
+    return jsonify(get_summary())
 
 
 @app.route("/summary/monthly")
 def monthly_summary():
-    months = {}
-    for t in transactions:
-        month_key = t.get("date", "")[:7]
-        if month_key not in months:
-            months[month_key] = {"month": month_key, "income": 0, "expense": 0}
-        if t.get("type") == "income":
-            months[month_key]["income"] += float(t["amount"])
-        else:
-            months[month_key]["expense"] += float(t["amount"])
-    return jsonify(sorted(months.values(), key=lambda x: x["month"], reverse=True))
+    return jsonify(get_monthly_summary())
 
 
 @app.route("/ai/spending-insights")
 def spending_insights():
-    if not transactions:
-        return jsonify({"insight": "No transactions yet. Add some to get insights."})
     from ai import analyze_spending
-    result = analyze_spending(transactions)
+    rows = get_transactions({})
+    if not rows:
+        return jsonify({"insight": "No transactions yet. Add some to get insights."})
+    result = analyze_spending(rows)
     return jsonify({"insight": result.get("summary", "No insight available.")})
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
