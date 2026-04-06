@@ -31,6 +31,7 @@ jobs:
         env:
           TESTING: "1"
           USE_MOCK_DB: "1"
+          PYTHONPATH: .
         run: pytest -q
 
       - name: Build Docker image
