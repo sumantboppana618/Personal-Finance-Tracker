@@ -1,4 +1,8 @@
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError:  # pragma: no cover - production may not install dotenv
+    def load_dotenv():
+        return False
 from flask import Flask, jsonify, render_template, request
 
 from db import (

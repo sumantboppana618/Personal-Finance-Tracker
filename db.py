@@ -5,9 +5,15 @@ from typing import Any, Dict, List, Optional
 from bson import ObjectId
 from pymongo import MongoClient
 
-MONGO_URI = os.getenv("MONGO_URI")
-MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "finance_tracker")
-USE_MOCK_DB = os.getenv("USE_MOCK_DB") == "1"
+
+def _env(name: str, default: Optional[str] = None) -> Optional[str]:
+    value = os.getenv(name, default)
+    return value.strip() if isinstance(value, str) else value
+
+
+MONGO_URI = _env("MONGO_URI")
+MONGO_DB_NAME = _env("MONGO_DB_NAME", "finance_tracker")
+USE_MOCK_DB = _env("USE_MOCK_DB") == "1"
 
 _mock_transactions: List[Dict[str, Any]] = []
 
