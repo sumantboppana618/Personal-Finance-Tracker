@@ -254,6 +254,9 @@
 
             bodyEl.querySelectorAll("button[data-id]").forEach((btn) => {
                 btn.addEventListener("click", async () => {
+                    if (!confirm("Are you sure you want to delete this transaction?")) {
+                        return;
+                    }
                     try {
                         await fetchJSON(`/transactions/${btn.dataset.id}`, { method: "DELETE" });
                         await refreshAll();
