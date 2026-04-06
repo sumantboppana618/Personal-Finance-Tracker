@@ -1,8 +1,12 @@
 import os
-import requests
 
 
 def analyze_spending(transactions):
+    try:
+        import requests
+    except ModuleNotFoundError:
+        return {"summary": "AI unavailable: requests dependency is not installed."}
+
     api_key = os.environ.get("GEMINI_KEY")
     if not api_key:
         return {"summary": "AI unavailable: no API key configured."}
