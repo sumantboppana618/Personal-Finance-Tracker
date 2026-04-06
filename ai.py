@@ -20,6 +20,7 @@ def analyze_spending(transactions):
     def local_insight():
         if not expenses:
             return "No expenses yet. Add expenses to see spending insights."
+
         top_cat, top_amt = (
             max(category_totals.items(), key=lambda x: x[1])
             if category_totals
@@ -36,7 +37,6 @@ def analyze_spending(transactions):
             f"balance QAR {total_income - total_expense}. {savings_tip}"
         )
 
-    # Fast path: no API key configured
     api_key = os.environ.get("GEMINI_KEY")
     if not api_key:
         return {"summary": local_insight()}
@@ -72,7 +72,8 @@ def analyze_spending(transactions):
                 "contents": [
                     {"role": "user", "parts": [{"text": prompt}]}
                 ]
-            }
+            },
+            timeout=15,
         )
         data = response.json()
         text = data["candidates"][0]["content"]["parts"][0]["text"]
