@@ -7,22 +7,26 @@ app = Flask(__name__)
 transactions = []
 
 
+# --- Home Page ---
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# --- Health Check ---
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
 
 
+# --- Database Health Check ---
 @app.route("/db-health")
 def db_health():
     status = get_db_status()
     return jsonify(status)
 
 
+# --- Transaction CRUD Routes ---
 @app.route("/transactions", methods=["GET"])
 def get_transactions():
     result = []
@@ -44,6 +48,7 @@ def add_transaction():
     return jsonify(data), 201
 
 
+# --- Edit and Delete Routes ---
 @app.route("/transactions/<int:index>", methods=["PUT"])
 def update_transaction(index):
     if 0 <= index < len(transactions):
@@ -67,6 +72,7 @@ def reset_transactions():
     return jsonify({"message": "All transactions cleared"})
 
 
+# --- Summary and Reporting Routes ---
 @app.route("/summary")
 def summary():
     total_income = sum(
@@ -96,6 +102,7 @@ def monthly_summary():
     return jsonify(sorted(months.values(), key=lambda x: x["month"], reverse=True))
 
 
+# --- AI Spending Insights ---
 @app.route("/ai/spending-insights")
 def spending_insights():
     if not transactions:
