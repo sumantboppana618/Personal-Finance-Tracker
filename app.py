@@ -24,22 +24,26 @@ def add_no_cache_headers(response):
     return response
 
 
+# --- Home Page ---
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# --- Health Check ---
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
 
 
+# --- Database Health Check ---
 @app.route("/db-health")
 def db_health():
     status = get_db_status()
     return jsonify(status)
 
 
+# --- Transaction CRUD Routes ---
 @app.route("/transactions", methods=["GET"])
 def list_transactions():
     filters = {
@@ -85,6 +89,7 @@ def reset_transactions():
     return jsonify({"message": "All transactions cleared"})
 
 
+# --- Summary and Reporting Routes ---
 @app.route("/summary")
 def summary():
     return jsonify(get_summary())
@@ -95,6 +100,7 @@ def monthly_summary():
     return jsonify(get_monthly_summary())
 
 
+# --- AI Spending Insights ---
 @app.route("/ai/spending-insights")
 def spending_insights():
     from ai import analyze_spending
