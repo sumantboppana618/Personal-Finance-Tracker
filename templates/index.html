@@ -61,7 +61,7 @@
                                 <option value="food">Food</option>
                                 <option value="transport">Transport</option>
                                 <option value="shopping">Shopping</option>
-                                <option value="bills">Bills</option>
+                                <option value="bills">Bills</option><!--  -->
                                 <option value="entertainment">Entertainment</option>
                                 <option value="healthcare">Healthcare</option>
                                 <option value="education">Education</option>
@@ -81,7 +81,6 @@
                     </div>
                     <div class="actions">
                         <button type="submit" class="primary-btn">Save Transaction</button>
-                        <button type="button" id="cancel-edit" class="ghost-btn small" style="display:none;">Cancel Edit</button>
                         <p id="form-status" class="status"></p>
                     </div>
                 </form>
@@ -166,9 +165,7 @@
                     <h2>AI Spending Insight</h2>
                     <p class="hint">Generated from your most recent activity.</p>
                 </div>
-                <div id="ai-insight" class="insight">
-                    <p class="hint">No transactions yet. Add expenses to see spending insights.</p>
-                </div>
+                <div id="ai-insight" class="insight">No transactions yet. Add expenses to see spending insights.</div>
             </section>
 
             <section class="card">
@@ -189,6 +186,9 @@
                 <button id="refresh-btn" class="ghost-btn full-width">Refresh data</button>
             </section>
         </main>
+        <footer style="text-align:center; padding:24px 0 8px; color:var(--muted); font-size:13px;">
+            <p>Personal Finance Tracker &mdash; INFS3203 Team Project &mdash; UDST 2026</p>
+        </footer>
     </div>
 
     <script>
@@ -203,7 +203,6 @@
         const monthlyList = document.getElementById("monthly-list");
         const expenseCategoriesEl = document.getElementById("expense-categories");
         const refreshBtn = document.getElementById("refresh-btn");
-        const cancelEditBtn = document.getElementById("cancel-edit");
 
         const filterType = document.getElementById("filter-type");
         const filterCategory = document.getElementById("filter-category");
@@ -219,21 +218,13 @@
         }
 
         async function fetchJSON(url, options) {
-            const res = await fetch(url, options);
+            const res = await fetch(url, { cache: "no-store", ...options });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
                 const message = data.error || res.statusText;
                 throw new Error(message);
             }
             return data;
-        }
-
-        function cancelEdit() {
-            delete form.dataset.editId;
-            form.reset();
-            document.querySelector(".primary-btn").textContent = "Save Transaction";
-            cancelEditBtn.style.display = "none";
-            document.getElementById("date").valueAsDate = new Date();
         }
 
         async function loadSummary() {
@@ -256,39 +247,18 @@
                     <td>${row.category}</td>
                     <td>${formatCurrency(row.amount)}</td>
                     <td>${row.date}</td>
-                    <td>
-                        <button class="link-btn edit-btn" data-id="${row.id}">Edit</button>
-                        <button class="link-btn delete-btn" data-id="${row.id}">Delete</button>
-                    </td>
+                    <td><button class="link-btn" data-id="${row.id}">Delete</button></td>
                 `;
                 bodyEl.appendChild(tr);
             });
 
-            bodyEl.querySelectorAll(".delete-btn").forEach((btn) => {
+            bodyEl.querySelectorAll("button[data-id]").forEach((btn) => {
                 btn.addEventListener("click", async () => {
                     try {
                         await fetchJSON(`/transactions/${btn.dataset.id}`, { method: "DELETE" });
                         await refreshAll();
                     } catch (err) {
                         alert(err.message);
-                    }
-                });
-            });
-
-            bodyEl.querySelectorAll(".edit-btn").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const row = rows.find((r) => String(r.id) === btn.dataset.id);
-                    if (row) {
-                        document.getElementById("title").value = row.title;
-                        document.getElementById("amount").value = row.amount;
-                        document.getElementById("type").value = row.type;
-                        document.getElementById("category").value = row.category;
-                        document.getElementById("date").value = row.date;
-                        document.getElementById("notes").value = row.notes || "";
-                        form.dataset.editId = row.id;
-                        document.querySelector(".primary-btn").textContent = "Update Transaction";
-                        cancelEditBtn.style.display = "inline-block";
-                        window.scrollTo({ top: 0, behavior: "smooth" });
                     }
                 });
             });
@@ -340,21 +310,7 @@
 
         async function loadInsight() {
             const data = await fetchJSON("/ai/spending-insights");
-            const insightText = data.insight || "No insight available yet.";
-            insightEl.innerHTML = "";
-            const lines = insightText.split("\n").filter((line) => line.trim());
-            if (lines.length === 0) {
-                insightEl.innerHTML = "<p class='hint'>No insight available yet.</p>";
-                return;
-            }
-            const list = document.createElement("ul");
-            list.className = "insight-list";
-            lines.forEach((line) => {
-                const li = document.createElement("li");
-                li.textContent = line.replace(/^•\s*/, "");
-                list.appendChild(li);
-            });
-            insightEl.appendChild(list);
+            insightEl.textContent = data.insight || "No insight available yet.";
         }
 
         async function loadMonthly() {
@@ -405,32 +361,18 @@
 
             statusEl.textContent = "Saving...";
             try {
-                if (form.dataset.editId !== undefined && form.dataset.editId !== "") {
-                    await fetchJSON(`/transactions/${form.dataset.editId}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload),
-                    });
-                    delete form.dataset.editId;
-                    document.querySelector(".primary-btn").textContent = "Save Transaction";
-                    cancelEditBtn.style.display = "none";
-                } else {
-                    await fetchJSON("/transactions", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload),
-                    });
-                }
+                await fetchJSON("/transactions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
                 form.reset();
                 statusEl.textContent = "Saved!";
-                document.getElementById("date").valueAsDate = new Date();
                 await refreshAll();
             } catch (err) {
                 statusEl.textContent = err.message;
             }
         });
-
-        cancelEditBtn.addEventListener("click", cancelEdit);
 
         filterBtn.addEventListener("click", async () => {
             try {
