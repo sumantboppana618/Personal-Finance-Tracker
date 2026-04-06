@@ -144,3 +144,13 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 - Test AI features on live deployment
 - Update README with setup instructions and live URL
 - Prepare slides and rehearse live demo
+
+---
+
+## Contributors
+
+| Member | Role | GitHub |
+|--------|------|--------|
+| Sumant | AI & DevOps Lead | @sumantboppana618 |
+| Ibrahim | Frontend & UI Lead | @ibrahimgit05 |
+| Moataz | Backend & Database Lead | @moataz-r |
