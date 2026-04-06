@@ -1,5 +1,4 @@
 import os
-import json
 import requests
 
 
@@ -19,6 +18,10 @@ def analyze_spending(transactions):
         cat = t.get("category", "other")
         category_totals[cat] = category_totals.get(cat, 0) + float(t["amount"])
 
+    expense_breakdown = "\n".join(
+        f"- {cat}: QAR {amt}" for cat, amt in category_totals.items()
+    )
+
     prompt = (
         "You are a personal finance advisor. Analyze this spending data "
         "and give brief, helpful advice.\n\n"
@@ -26,8 +29,8 @@ def analyze_spending(transactions):
         f"Total Expenses: QAR {total_expense}\n"
         f"Balance: QAR {total_income - total_expense}\n\n"
         "Expense breakdown by category:\n"
-        + "\n".join(f"- {cat}: QAR {amt}" for cat, amt in category_totals.items())
-        + "\n\nGive 3-4 short bullet points: spending patterns, "
+        f"{expense_breakdown}\n\n"
+        "Give 3-4 short bullet points: spending patterns, "
         "areas to cut back, and one saving tip. Keep it concise."
     )
 
