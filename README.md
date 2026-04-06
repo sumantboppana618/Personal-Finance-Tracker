@@ -22,7 +22,7 @@
 - [x] Core transaction routes implemented (create, read, update, delete, filter)
 - [x] MongoDB read/write implemented with mock-friendly fallback for tests/CI
 - [x] AI spending insight endpoint (`/ai/spending-insights`) working end-to-end
-- [x] Unit test suite expanded to 12 tests covering routes and logic
+- [x] Unit test suite expanded to 11 tests covering routes and logic
 - [x] GitHub Actions CI added (lint, tests, Docker build, container smoke test)
 - [x] Docker image builds cleanly; container health endpoint verified in CI
 
@@ -34,6 +34,7 @@
   - `MONGO_URI`: Atlas connection string (e.g., `mongodb+srv://user:pass@personalfinancetracker...`)
   - `MONGO_DB_NAME`: optional; defaults to `finance_tracker`
   - `GEMINI_KEY`: Gemini API key powering `/ai/spending-insights`
+  - `USE_MOCK_DB`: set to `1` to run locally without a real MongoDB (tests/CI use this)
 
 - **Commands**
   - `pip install -r requirements.txt`
@@ -143,3 +144,13 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 - Test AI features on live deployment
 - Update README with setup instructions and live URL
 - Prepare slides and rehearse live demo
+
+---
+
+## Contributors
+
+| Member | Role | GitHub |
+|--------|------|--------|
+| Sumant | AI & DevOps Lead | @sumantboppana618 |
+| Ibrahim | Frontend & UI Lead | @ibrahimgit05 |
+| Moataz | Backend & Database Lead | @moataz-r |
