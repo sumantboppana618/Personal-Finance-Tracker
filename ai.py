@@ -7,10 +7,6 @@ def analyze_spending(transactions):
     except ModuleNotFoundError:
         return {"summary": "AI unavailable: requests dependency is not installed."}
 
-    api_key = os.environ.get("GEMINI_KEY")
-    if not api_key:
-        return {"summary": "AI unavailable: no API key configured."}
-
     expenses = [t for t in transactions if t.get("type") == "expense"]
     incomes = [t for t in transactions if t.get("type") == "income"]
 
@@ -21,10 +17,6 @@ def analyze_spending(transactions):
     for t in expenses:
         cat = t.get("category", "other")
         category_totals[cat] = category_totals.get(cat, 0) + float(t["amount"])
-
-    expense_breakdown = "\n".join(
-        f"- {cat}: QAR {amt}" for cat, amt in category_totals.items()
-    )
 
     prompt = (
         "You are a personal finance advisor. Analyze this spending data "
