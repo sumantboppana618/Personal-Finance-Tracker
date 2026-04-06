@@ -395,7 +395,10 @@
 
         document.getElementById("date").valueAsDate = new Date();
 
-        refreshAll().catch((err) => {
+        statusEl.textContent = "Loading data...";
+        refreshAll().then(() => {
+            statusEl.textContent = "";
+        }).catch((err) => {
             statusEl.textContent = err.message;
         });
     </script>
