@@ -4,3 +4,4 @@ pymongo==4.16.0
 gunicorn==21.2.0
 requests==2.32.3
 pytest==8.0.2
+flake8==6.0.0
