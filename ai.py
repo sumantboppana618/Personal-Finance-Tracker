@@ -2,11 +2,6 @@ import os
 
 
 def analyze_spending(transactions):
-    try:
-        import requests
-    except ModuleNotFoundError:
-        return {"summary": "AI unavailable: requests dependency is not installed."}
-
     expenses = [t for t in transactions if t.get("type") == "expense"]
     incomes = [t for t in transactions if t.get("type") == "income"]
 
@@ -17,6 +12,39 @@ def analyze_spending(transactions):
     for t in expenses:
         cat = t.get("category", "other")
         category_totals[cat] = category_totals.get(cat, 0) + float(t["amount"])
+
+    expense_breakdown = "\n".join(
+        f"- {cat}: QAR {amt}" for cat, amt in category_totals.items()
+    )
+
+    def local_insight():
+        if not expenses:
+            return "No expenses yet. Add expenses to see spending insights."
+
+        top_cat, top_amt = (
+            max(category_totals.items(), key=lambda x: x[1])
+            if category_totals
+            else ("uncategorized", 0)
+        )
+        savings_tip = (
+            "Try trimming QAR "
+            f"{max(50, round(top_amt * 0.05, 2))} "
+            f"from {top_cat} next week."
+        )
+        return (
+            f"Expense focus: {top_cat} at QAR {top_amt}. "
+            f"Total expense QAR {total_expense}, income QAR {total_income}, "
+            f"balance QAR {total_income - total_expense}. {savings_tip}"
+        )
+
+    api_key = os.environ.get("GEMINI_KEY")
+    if not api_key:
+        return {"summary": local_insight()}
+
+    try:
+        import requests
+    except ModuleNotFoundError:
+        return {"summary": local_insight()}
 
     prompt = (
         "You are a personal finance advisor. Analyze this spending data "
@@ -44,10 +72,11 @@ def analyze_spending(transactions):
                 "contents": [
                     {"role": "user", "parts": [{"text": prompt}]}
                 ]
-            }
+            },
+            timeout=15,
         )
         data = response.json()
         text = data["candidates"][0]["content"]["parts"][0]["text"]
         return {"summary": text}
-    except Exception as e:
-        return {"summary": f"AI analysis failed: {str(e)}"}
+    except Exception:
+        return {"summary": local_insight()}
