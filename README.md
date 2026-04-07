@@ -6,6 +6,24 @@
 
 ---
 
+## Live Deployment
+
+- **Production URL:** `https://personal-finance-tracker-blue-beta.vercel.app/`
+- **Platform:** Vercel
+- **Health Check:** `https://personal-finance-tracker-blue-beta.vercel.app/health`
+
+---
+
+## Architecture Overview
+
+- **Client Layer:** HTML, CSS, and JavaScript power the dashboard UI for transactions, summaries, filters, and AI insights.
+- **Application Layer:** Flask serves the frontend and exposes backend routes for health checks, transaction CRUD, summaries, and AI insight generation.
+- **Data Layer:** MongoDB Atlas stores transaction data in production, with an in-memory mock database available for tests and CI through `USE_MOCK_DB=1`.
+- **AI Layer:** Google Gemini is used to generate spending insights from recorded transactions, with a safe local fallback if the API is unavailable.
+- **Delivery Pipeline:** GitHub Actions runs linting, tests, Docker builds, and container smoke checks. Pushes to `main` also publish a Docker image to GHCR and trigger Vercel production deployment.
+
+---
+
 ## Week 11 Milestone Status
 
 - [x] Project proposal added to the repository `README.md`
@@ -30,12 +48,12 @@
 
 ## Week 13 Milestone Status
 
-- [ ] Full pipeline working end-to-end: `git push` -> GitHub Actions (CI) -> container registry -> cloud provider (auto-deploy)
-- [ ] Application live at a publicly accessible URL on your chosen cloud provider (for example: Render, Railway, or Fly.io)
-- [ ] All AI-powered features verified working on the live deployment
+- [x] Full pipeline working end-to-end: `git push` -> GitHub Actions (CI + Docker image publish) -> Vercel production auto-deploy
+- [x] Application live at `https://personal-finance-tracker-blue-beta.vercel.app/`
+- [x] All AI-powered features verified working on the live deployment
 - [ ] Live demo rehearsed: a small code change triggers a push, both pipeline jobs go green, and the update is visible on the live URL
 - [ ] Presentation slides complete and all team members have a speaking part
-- [ ] All GitHub Issues closed or labelled; `README.md` updated with architecture overview, setup instructions, and live URL
+- [x] All GitHub Issues closed or labelled; `README.md` updated with architecture overview, setup instructions, and live URL
 
 ---
 
@@ -95,8 +113,11 @@ Required to package the application consistently and run it locally and in deplo
 ### CI/CD: GitHub Actions
 Required by the course to automate testing, Docker builds, and deployment.
 
-### Deployment: Render
-Suggested in the project guide and works well with Docker and GitHub Actions.
+### Deployment: Vercel
+Used for the live cloud deployment with automatic production updates from the GitHub repository.
+
+### Container Registry: GitHub Container Registry (GHCR)
+Used to publish the Docker image automatically from GitHub Actions on pushes to `main`.
 
 ---
 
@@ -125,7 +146,7 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 ## Shared Team Responsibilities
 
 - All members create and work from feature branches
-- All tasks tracked through GitHub Issues and project board
+- All tasks tracked through GitHub Issues and the project board
 - All changes merged through pull requests
 - Every member reviews teammates' PRs and leaves meaningful comments
 - All members contribute commits and weekly progress updates
@@ -150,10 +171,10 @@ Suggested in the project guide and works well with Docker and GitHub Actions.
 - Set up GitHub Actions CI pipeline
 
 ### Week 13 - Deployment & Presentation Prep
-- Deploy the application to Render
-- Configure CD pipeline from GitHub Actions
+- Deploy the application to Vercel
+- Verify automatic production deployment from pushes to `main`
 - Test AI features on live deployment
-- Update README with setup instructions and live URL
+- Update README with architecture overview, setup instructions, and live URL
 - Prepare slides and rehearse live demo
 
 ---
