@@ -2,6 +2,7 @@ import os
 
 
 def analyze_spending(transactions):
+    api_key = (os.environ.get("GEMINI_KEY") or "").strip()
     expenses = [t for t in transactions if t.get("type") == "expense"]
     incomes = [t for t in transactions if t.get("type") == "income"]
 
@@ -37,7 +38,6 @@ def analyze_spending(transactions):
             f"balance QAR {total_income - total_expense}. {savings_tip}"
         )
 
-    api_key = os.environ.get("GEMINI_KEY")
     if not api_key:
         return {"summary": local_insight()}
 

@@ -51,8 +51,8 @@
 - [x] Full pipeline working end-to-end: `git push` -> GitHub Actions (CI + Docker image publish) -> Vercel production auto-deploy
 - [x] Application live at `https://personal-finance-tracker-blue-beta.vercel.app/`
 - [x] All AI-powered features verified working on the live deployment
-- [ ] Live demo rehearsed: a small code change triggers a push, both pipeline jobs go green, and the update is visible on the live URL
-- [ ] Presentation slides complete and all team members have a speaking part
+- [x] Live demo rehearsed: a small code change triggers a push, both pipeline jobs go green, and the update is visible on the live URL
+- [x] Presentation slides complete and all team members have a speaking part
 - [x] All GitHub Issues closed or labelled; `README.md` updated with architecture overview, setup instructions, and live URL
 
 ---
@@ -146,7 +146,7 @@ Used to publish the Docker image automatically from GitHub Actions on pushes to 
 ## Shared Team Responsibilities
 
 - All members create and work from feature branches
-- All tasks tracked through GitHub Issues and project board
+- All tasks tracked through GitHub Issues and the project board
 - All changes merged through pull requests
 - Every member reviews teammates' PRs and leaves meaningful comments
 - All members contribute commits and weekly progress updates
