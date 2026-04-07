@@ -112,6 +112,13 @@ h1 {
 .form-card,
 .filters-card { grid-column: span 2; }
 
+.reset-card {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 720px;
+    justify-self: center;
+}
+
 .section-header {
     display: flex;
     flex-wrap: wrap;
@@ -331,3 +338,4 @@ th { color: var(--muted); font-weight: 600; }
     .monthly-row { flex-direction: column; align-items: flex-start; gap: 6px; }
     th, td { padding: 8px 6px; font-size: 13px; }
 }
+

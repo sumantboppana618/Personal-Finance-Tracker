@@ -52,7 +52,7 @@
 - [x] Application live at `https://personal-finance-tracker-blue-beta.vercel.app/`
 - [x] All AI-powered features verified working on the live deployment
 - [x] Live demo rehearsed: a small code change triggers a push, both pipeline jobs go green, and the update is visible on the live URL
-- [x] Presentation slides are complete, and all team members have a speaking part
+- [x] Presentation slides complete and all team members have a speaking part
 - [x] All GitHub Issues closed or labelled; `README.md` updated with architecture overview, setup instructions, and live URL
 
 ---
